@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../scanner/presentation/pages/scanner_page.dart';
 import '../providers/document_provider.dart';
 
 class AddDocumentPage extends ConsumerWidget {
@@ -42,9 +43,20 @@ class AddDocumentPage extends ConsumerWidget {
                 icon: Icons.document_scanner_rounded,
                 title: 'Scan Document',
                 description: 'Use your camera to scan a document.',
-                onTap: () {
-                  // Camera will be implemented in the next milestone.
-                },
+                  onTap: () async {
+                    final imagePath = await Navigator.of(context).push<String>(
+                      MaterialPageRoute(
+                        builder: (_) => const ScannerPage(),
+                      ),
+                    );
+
+                    if (!context.mounted || imagePath == null) {
+                      return;
+                    }
+
+                    // We'll connect this captured image to the Document model
+                    // in the next step.
+                  },
               ),
 
               const SizedBox(height: 16),

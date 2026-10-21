@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import '../../../ocr/data/ocr_service.dart';
+import '../../../ocr/presentation/pages/ocr_result_page.dart';
 import '../../domain/document.dart';
 
 class DocumentDetailsPage extends StatelessWidget {
@@ -32,6 +34,16 @@ class DocumentDetailsPage extends StatelessWidget {
               _buildPreview(isPdf),
               const SizedBox(height: 24),
               _buildInformation(),
+              const SizedBox(height: 24),
+
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: () => _runOcr(context),
+                  icon: const Icon(Icons.text_snippet_outlined),
+                  label: const Text('Extract Text'),
+                ),
+              ),
             ],
           ),
         ),
@@ -91,6 +103,60 @@ class DocumentDetailsPage extends StatelessWidget {
         ),
       ],
     );
+  }
+  Future<void> _runOcr(BuildContext context) async {
+    if (document.type != DocumentType.image) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('OCR currently works with images.'),
+        ),
+      );
+      return;
+    }
+
+    final messenger = ScaffoldMessenger.of(context);
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    final ocrService = OcrService();
+
+    try {
+      final text = await ocrService.extractText(document.path);
+
+      if (!context.mounted) {
+        return;
+      }
+
+      Navigator.of(context).pop();
+
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => OcrResultPage(text: text),
+        ),
+      );
+    } catch (e) {
+      if (!context.mounted) {
+        return;
+      }
+
+      Navigator.of(context).pop();
+
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('OCR failed: $e'),
+        ),
+      );
+    } finally {
+      await ocrService.dispose();
+    }
   }
 }
 

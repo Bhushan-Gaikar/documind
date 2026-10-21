@@ -33,4 +33,18 @@ class DocumentNotifier extends Notifier<List<Document>> {
       document,
     ];
   }
+
+  Future<void> addScannedDocument(String imagePath) async {
+    final document = await _repository.createDocumentFromImage(imagePath);
+
+    if (document == null) {
+      return;
+    }
+
+    state = [
+      ...state,
+      document,
+    ];
+  }
+
 }

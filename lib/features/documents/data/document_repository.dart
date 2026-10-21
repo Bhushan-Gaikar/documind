@@ -31,4 +31,21 @@ class DocumentRepository {
       createdAt: DateTime.now(),
     );
   }
+
+  Future<Document?> createDocumentFromImage(String imagePath) async {
+    if (imagePath.isEmpty) {
+      return null;
+    }
+
+    final fileName =
+        'Scanned Document ${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+    return Document(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      name: fileName,
+      path: imagePath,
+      type: DocumentType.image,
+      createdAt: DateTime.now(),
+    );
+  }
 }

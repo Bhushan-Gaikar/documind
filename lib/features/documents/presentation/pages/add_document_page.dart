@@ -54,8 +54,15 @@ class AddDocumentPage extends ConsumerWidget {
                       return;
                     }
 
-                    // We'll connect this captured image to the Document model
-                    // in the next step.
+                    await ref
+                        .read(documentProvider.notifier)
+                        .addScannedDocument(imagePath);
+
+                    if (!context.mounted) {
+                      return;
+                    }
+
+                    Navigator.of(context).pop();
                   },
               ),
 

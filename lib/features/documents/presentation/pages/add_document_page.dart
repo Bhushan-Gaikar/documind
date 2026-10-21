@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AddDocumentPage extends StatelessWidget {
+import '../providers/document_provider.dart';
+
+class AddDocumentPage extends ConsumerWidget {
   const AddDocumentPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           'Add Document',
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w700),
         ),
       ),
       body: SafeArea(
@@ -27,9 +28,7 @@ class AddDocumentPage extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-
               const SizedBox(height: 8),
-
               Text(
                 'Choose a source to start processing your document.',
                 style: TextStyle(
@@ -37,7 +36,6 @@ class AddDocumentPage extends StatelessWidget {
                   fontSize: 14,
                 ),
               ),
-
               const SizedBox(height: 32),
 
               _DocumentSourceCard(
@@ -45,7 +43,7 @@ class AddDocumentPage extends StatelessWidget {
                 title: 'Scan Document',
                 description: 'Use your camera to scan a document.',
                 onTap: () {
-                  // Camera feature will come later.
+                  // Camera will be implemented in the next milestone.
                 },
               ),
 
@@ -55,8 +53,14 @@ class AddDocumentPage extends StatelessWidget {
                 icon: Icons.photo_library_outlined,
                 title: 'Upload Image',
                 description: 'Select a document image from your device.',
-                onTap: () {
-                  // Image picker will come later.
+                onTap: () async {
+                  await ref
+                      .read(documentProvider.notifier)
+                      .pickDocument();
+
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
                 },
               ),
 
@@ -66,8 +70,14 @@ class AddDocumentPage extends StatelessWidget {
                 icon: Icons.picture_as_pdf_outlined,
                 title: 'Upload PDF',
                 description: 'Select an existing PDF document.',
-                onTap: () {
-                  // PDF picker will come later.
+                onTap: () async {
+                  await ref
+                      .read(documentProvider.notifier)
+                      .pickDocument();
+
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
                 },
               ),
             ],
@@ -117,9 +127,7 @@ class _DocumentSourceCard extends StatelessWidget {
                   size: 26,
                 ),
               ),
-
               const SizedBox(width: 16),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,7 +150,6 @@ class _DocumentSourceCard extends StatelessWidget {
                   ],
                 ),
               ),
-
               const Icon(Icons.chevron_right_rounded),
             ],
           ),

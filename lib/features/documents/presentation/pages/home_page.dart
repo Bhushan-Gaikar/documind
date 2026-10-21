@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../domain/document.dart';
+import '../providers/document_provider.dart';
 import '../widgets/document_card.dart';
 import 'add_document_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -35,7 +38,7 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 24),
 
               Expanded(
-                child: _buildDocumentSection(),
+                child: _buildDocumentSection(ref),
               ),
             ],
           ),
@@ -79,25 +82,40 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildDocumentSection() {
-    // Temporary sample document.
-    // Later this will come from Riverpod + local database.
-    return ListView(
-      children: const [
-        DocumentCard(
-          title: 'Sample Invoice',
-          documentType: 'Invoice',
-          date: 'Today',
-          icon: Icons.receipt_long_rounded,
+  Widget _buildDocumentSection(WidgetRef ref) {
+    final documents = ref.watch(documentProvider);
+
+    if (documents.isEmpty) {
+      return Center(
+        child: Text(
+          'No documents yet',
+          style: TextStyle(
+            color: Colors.grey.shade600,
+            fontSize: 15,
+          ),
         ),
-        SizedBox(height: 12),
-        DocumentCard(
-          title: 'Identity Document',
-          documentType: 'Identity',
-          date: 'Yesterday',
-          icon: Icons.badge_outlined,
-        ),
-      ],
+      );
+    }
+
+    return ListView.separated(
+      itemCount: documents.length,
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final document = documents[index];
+
+        return DocumentCard(
+          title: document.name,
+          documentType: document.type.name.toUpperCase(),
+          date: _formatDate(document.createdAt),
+          icon: document.type == DocumentType.pdf
+              ? Icons.picture_as_pdf_outlined
+              : Icons.image_outlined,
+        );
+      },
     );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
   }
 }

@@ -5,6 +5,7 @@ class DocumentCard extends StatelessWidget {
   final String documentType;
   final String date;
   final IconData icon;
+  final VoidCallback? onTap;
 
   const DocumentCard({
     super.key,
@@ -12,6 +13,7 @@ class DocumentCard extends StatelessWidget {
     required this.documentType,
     required this.date,
     required this.icon,
+    this.onTap,
   });
 
   @override
@@ -19,9 +21,7 @@ class DocumentCard extends StatelessWidget {
     return Card(
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          // Document details will be added later.
-        },
+        onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(

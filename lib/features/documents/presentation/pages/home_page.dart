@@ -5,6 +5,7 @@ import '../../domain/document.dart';
 import '../providers/document_provider.dart';
 import '../widgets/document_card.dart';
 import 'add_document_page.dart';
+import 'document_details_page.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -110,6 +111,15 @@ class HomePage extends ConsumerWidget {
           icon: document.type == DocumentType.pdf
               ? Icons.picture_as_pdf_outlined
               : Icons.image_outlined,
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => DocumentDetailsPage(
+                  document: document,
+                ),
+              ),
+            );
+          },
         );
       },
     );

@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../features/documents/presentation/pages/home_page.dart';
 
 class AppRouter {
   AppRouter._();
@@ -15,26 +16,4 @@ class AppRouter {
       ),
     ],
   );
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('DocuMind'),
-      ),
-      body: const Center(
-        child: Text(
-          'Document Intelligence',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
-  }
 }

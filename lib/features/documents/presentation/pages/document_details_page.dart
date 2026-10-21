@@ -2,8 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import '../../../ai/data/mock_ai_repository.dart';
+import '../../../ai/presentation/pages/classification_page.dart';
 import '../../../ocr/data/ocr_service.dart';
-import '../../../ocr/presentation/pages/ocr_result_page.dart';
 import '../../domain/document.dart';
 
 class DocumentDetailsPage extends StatelessWidget {
@@ -137,11 +138,7 @@ class DocumentDetailsPage extends StatelessWidget {
 
       Navigator.of(context).pop();
 
-      await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => OcrResultPage(text: text),
-        ),
-      );
+      await _classifyDocument(context, text);
     } catch (e) {
       if (!context.mounted) {
         return;
@@ -157,6 +154,28 @@ class DocumentDetailsPage extends StatelessWidget {
     } finally {
       await ocrService.dispose();
     }
+  }
+
+  Future<void> _classifyDocument(
+      BuildContext context,
+      String text,
+      ) async {
+    final repository = MockAiRepository();
+
+    final classification =
+    await repository.classifyDocument(text);
+
+    if (!context.mounted) {
+      return;
+    }
+
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ClassificationPage(
+          classification: classification,
+        ),
+      ),
+    );
   }
 }
 
